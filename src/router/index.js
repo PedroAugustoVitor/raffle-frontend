@@ -4,7 +4,7 @@ import AdminPanel from '../views/AdminPanel.vue';
 import HomePage from '../views/HomePage.vue'; // NOVO
 
 const routes = [
-    { path: '/', name: 'Home', component: HomePage }, // Agora aponta para HomePage
+    { path: '/', name: 'Home', component: HomePage },
     { path: '/admin', name: 'AdminLogin', component: AdminLogin },
     {
         path: '/admin/panel',
@@ -15,7 +15,7 @@ const routes = [
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes
 });
 
@@ -27,5 +27,4 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
-
 export default router;
