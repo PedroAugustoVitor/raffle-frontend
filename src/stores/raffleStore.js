@@ -1,27 +1,22 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const API = axios.create({ baseURL: 'https://raffle-backend-kb40.onrender.com/api' });
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api' });
 
 export const useRaffleStore = defineStore('raffle', {
     state: () => ({
-        numbers: [],                // { number, status }
-        selectedNumbers: new Set(), // IDs dos números selecionados
-        reservation: null,          // { reservationId, total, pixKey }
-        step: 'select',             // 'select', 'form', 'payment', 'done'
+        numbers: [],
+        selectedNumbers: new Set(),
+        reservation: null,
+        step: 'select', // 'select', 'form', 'payment', 'done'
         formData: { name: '', phone: '' },
         loading: false,
         error: null
     }),
-
     getters: {
-        totalValue: (state) => state.selectedNumbers.size * 300,
-        canProceedToForm: (state) => state.selectedNumbers.size > 0,
-        freeNumbers: (state) => state.numbers.filter(n => n.status === 'free').map(n => n.number),
-        reservedNumbers: (state) => state.numbers.filter(n => n.status === 'reserved').map(n => n.number),
-        paidNumbers: (state) => state.numbers.filter(n => n.status === 'paid').map(n => n.number)
+        totalValue: (state) => state.selectedNumbers.size * 1000,
+        freeNumbers: (state) => state.numbers.filter(n => n.status === 'free').map(n => n.number)
     },
-
     actions: {
         async fetchNumbers() {
             this.loading = true;
@@ -34,33 +29,27 @@ export const useRaffleStore = defineStore('raffle', {
                 this.loading = false;
             }
         },
-
         toggleNumber(number) {
             const numStatus = this.numbers.find(n => n.number === number)?.status;
-            if (numStatus !== 'free') return; // não permite selecionar se não livre
-
+            if (numStatus !== 'free') return;
             if (this.selectedNumbers.has(number)) {
                 this.selectedNumbers.delete(number);
             } else {
                 this.selectedNumbers.add(number);
             }
         },
-
         clearSelection() {
             this.selectedNumbers.clear();
         },
-
         proceedToForm() {
             if (this.selectedNumbers.size === 0) return;
             this.step = 'form';
         },
-
         async submitReservation() {
             if (!this.formData.name || !this.formData.phone) {
                 this.error = 'Nome e telefone são obrigatórios';
                 return;
             }
-
             this.loading = true;
             this.error = null;
             try {
@@ -75,14 +64,13 @@ export const useRaffleStore = defineStore('raffle', {
                     total: data.total,
                     pixKey: data.pixKey
                 };
-                this.step = 'payment';
-                // Atualiza a grade localmente (opcional, mas melhor recarregar)
+                this.step = 'pending';
                 await this.fetchNumbers();
                 this.selectedNumbers.clear();
             } catch (e) {
                 if (e.response?.status === 409) {
                     this.error = `Conflito: ${e.response.data.error}. Recarregue a página.`;
-                    await this.fetchNumbers(); // recarrega números atualizados
+                    await this.fetchNumbers();
                     this.selectedNumbers.clear();
                 } else {
                     this.error = 'Erro ao reservar. Tente novamente.';
@@ -91,21 +79,6 @@ export const useRaffleStore = defineStore('raffle', {
                 this.loading = false;
             }
         },
-
-        async confirmPayment() {
-            if (!this.reservation?.reservationId) return;
-            this.loading = true;
-            try {
-                await API.post('/confirm-payment', { reservationId: this.reservation.reservationId });
-                this.step = 'done';
-                await this.fetchNumbers();
-            } catch (e) {
-                this.error = 'Erro ao confirmar pagamento';
-            } finally {
-                this.loading = false;
-            }
-        },
-
         resetToSelection() {
             this.step = 'select';
             this.selectedNumbers.clear();

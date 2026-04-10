@@ -1,32 +1,36 @@
 <template>
   <div id="app">
-    <h1>Rifa Beneficente</h1>
-
-    <NumberGrid v-if="store.step === 'select'" />
-    <ReservationForm v-else-if="store.step === 'form'" />
-    <PixPayment v-else-if="store.step === 'payment'" />
-
-    <div v-if="store.step === 'done'" class="done-message">
-      <h2>🎉 Pagamento confirmado! Obrigado!</h2>
-      <button @click="store.resetToSelection">Voltar ao início</button>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+      <div class="container">
+        <router-link class="navbar-brand" to="/">🎟️ Rifa Beneficente</router-link>
+        <div class="navbar-nav ms-auto">
+          <template v-if="isAdminLoggedIn">
+            <router-link class="nav-link" to="/admin/panel">Painel Administrativo</router-link>
+            <a class="nav-link" href="#" @click.prevent="logout">Sair</a>
+          </template>
+          <template v-else>
+            <router-link class="nav-link" to="/admin">Área Admin</router-link>
+          </template>
+        </div>
+      </div>
+    </nav>
+    <router-view />
   </div>
 </template>
 
 <script>
-import { useRaffleStore } from './stores/raffleStore';
-import NumberGrid from './components/NumberGrid.vue';
-import ReservationForm from './components/ReservationForm.vue';
-import PixPayment from './components/PixPayment.vue';
-
 export default {
-  components: {
-    NumberGrid,
-    ReservationForm,
-    PixPayment
+  name: 'App',
+  computed: {
+    isAdminLoggedIn() {
+      return !!localStorage.getItem('adminToken');
+    }
   },
-  created() {
-    this.store = useRaffleStore();
+  methods: {
+    logout() {
+      localStorage.removeItem('adminToken');
+      this.$router.push('/');
+    }
   }
 };
 </script>
