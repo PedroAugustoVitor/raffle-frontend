@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>Painel Adiministrativo</h2>
+      <h2>Painel Administrativo</h2>
       <button @click="logout" class="btn btn-outline-danger">Sair</button>
     </div>
 
