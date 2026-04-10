@@ -61,7 +61,7 @@ export default {
         localStorage.setItem('adminToken', data.token);
         this.$router.push('/admin/panel');
       } catch (err) {
-        this.error = err.response;
+        this.error = err.response?.data?.error || 'Erro ao fazer login';
       } finally {
         this.loading = false;
       }
