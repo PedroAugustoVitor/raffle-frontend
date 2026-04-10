@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   server: {
-    host: true // Permite acesso na rede local
+    host: true
   },
   base: '/raffle-frontend/',
 

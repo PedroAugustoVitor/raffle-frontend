@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001/api' });
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'https://raffle-backend-kb40.onrender.com/api' });
 
 export const useRaffleStore = defineStore('raffle', {
     state: () => ({
