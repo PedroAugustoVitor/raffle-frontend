@@ -12,7 +12,7 @@
             :class="['number-card', num.status, { selected: store.selectedNumbers.has(num.number) }]"
             @click="store.toggleNumber(num.number)"
         >
-          {{ num.number }}
+          {{ String(num.number).padStart(3, '0') }}
         </div>
       </div>
       <!-- Legenda dentro da área rolável, mas antes do footer -->
