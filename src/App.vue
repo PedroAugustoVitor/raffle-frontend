@@ -9,7 +9,7 @@
             <a class="nav-link" href="#" @click.prevent="logout">Sair</a>
           </template>
           <template v-else>
-            <router-link class="nav-link" to="/admin">Área Admin</router-link>
+            <router-link class="nav-link" to="/admin">Área Administrativa</router-link>
           </template>
         </div>
       </div>
